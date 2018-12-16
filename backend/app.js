@@ -8,7 +8,7 @@ var app = express();
 
 var loginController = require('./controllers/loginController');
 var requestController = require('./controllers/requestController');
-
+var signupController = require('./controllers/signupController');
 
 app.use(morgan('dev'));
 app.use(bodyParser('json'));
@@ -45,6 +45,7 @@ var verifyAccessToken = (req, res, next) => {
 
 app.use('/login', loginController);
 app.use('/requests', verifyAccessToken, requestController);
+app.use('/signup', signupController);
 
 app.use((req, res, next) => {
   var err = new Error("Not found");

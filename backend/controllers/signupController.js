@@ -11,7 +11,7 @@ router.post('/', (req, res, next) => {
       err.status = 403
       throw err
     }
-    return userService.createAccount(req.body)
+    return userService.addAccount(req.body)
   }).then(value => {
     res.statusCode = 201
     var result = { 'id': value.insertId, 'username': req.body.Username }
