@@ -7,18 +7,27 @@
       ref="gmap"
       :options="options"
       map-type-id="terrain">
-      <gmap-marker ref="markers" :position="start.center" :title="start.title" :icon="start.startIcon"  :draggable="true" @drag="updateCoordinates">
+      <gmap-marker ref="markers" :position="start.center" :title="start.title" :icon="start.startIcon"  :draggable="true">
       </gmap-marker>
 
-      <gmap-marker ref="finishMarkers" :position="finish.finishCenter" :title="finish.title" :icon="finish.finishIcon" :draggable="true" @drag="updateFinishPositionCoordinates">
+      <gmap-marker ref="finishMarkers" :position="finish.finishCenter" :title="finish.title" :icon="finish.finishIcon" :draggable="true">
       </gmap-marker>
     </gmap-map>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12" align="center">
+          <InfoBar :request="requestModel"/>
+
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
 import * as VueGoogleMaps from 'vue2-google-maps'
+import InfoBar from '@/components/InfoBar.vue'
 Vue.use(VueGoogleMaps, {
   load: {
     key: "AIzaSyBkwRNAhT2ic6ZMR3i10ms51YhUJGHTXaQ",
@@ -26,7 +35,9 @@ Vue.use(VueGoogleMaps, {
   }
 })
 export default {
-  props: ['request'],
+  components: {
+    InfoBar
+  },
   data () {
     return {
       state4: '',
@@ -34,6 +45,7 @@ export default {
       marker: null,
       finishedMarker: null,
       inputData: '',
+      requestModel: null,
       map: null,
       mapModel: null,
       selectedRequest: {},
@@ -117,9 +129,67 @@ export default {
         }]
       }
     }
+  },
+  methods: {
+    getRequestInfo(id) {
+      if (id == null) return
+      var requestPayload = {
+        ID: id
+      }
+
+      this.$store.dispatch('getRequestDetail', requestPayload).then(value => {
+        this.requestModel = value
+        console.log(value)
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+  },
+  mounted() {
+    //do something after mounting vue instance
+    this.$gmapApiPromiseLazy().then(() => {
+      this.geocoder = new google.maps.Geocoder();
+      this.directionsService = new google.maps.DirectionsService();
+      this.directionsDisplay = new google.maps.DirectionsRenderer();
+    })
+    var self = this
+    this.$refs.gmap.$mapPromise.then(map => {
+      self.map = map
+    });
+    this.marker = this.$refs.markers
+    this.finishedMarker = this.$refs.finishMarkers
+    this.mapModel = this.$refs.gmap
+    this.getRequestInfo(this.$route.params.reqId)
   }
 }
 </script>
 
 <style lang="css">
+  #map {
+    min-height: calc(100vh - 90px);
+  }
+
+  .autocomplete-input {
+    -webkit-appearance: none;
+    background-color: #fff;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    box-sizing: border-box;
+    color: #606266;
+    display: inline-block;
+    font-size: inherit;
+    height: 40px;
+    outline: 0;
+    padding: 0 15px;
+    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+    width: 65%;
+  }
+
+  .container {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 99;
+  }
 </style>
