@@ -14,5 +14,6 @@ exports.getRequestPerPage = function (limit, offset) {
 exports.getRequestByID = function (id) {
   var sql = `select req.*, sts.Name as StatusName from REQUESTS req join STATUS sts on req.Status = sts.ID
             where req.ID = ${id}`
+  console.log(sql)
   return db.load(sql)
 }

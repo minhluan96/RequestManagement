@@ -2,15 +2,15 @@
   <div class="req-item">
     <div class="row">
       <div class="col-md-12" style="text-align: left">
-        <span>Mã yêu cầu:</span><br/>
-        <span>Tên khách hàng:</span><br/>
-        <span>Nơi nhận khách:</span><br/>
-        <span>Nơi trả khách:</span>
+        <span><strong>Mã yêu cầu: </strong>{{request.ID}}</span><br/>
+        <span><strong>Tên khách hàng: </strong>{{request.GuestName}} </span><br/>
+        <span><strong>Nơi nhận khách: </strong>{{request.NameLocation}}</span><br/>
+        <span><strong>Nơi trả khách: </strong>{{request.FinishLocationName}}</span>
       </div>
     </div>
     <div class="row" style="text-align: left">
       <div class="col-sm-12">
-          <p>Tình trạng:</p>
+          <p><strong>Tình trạng: </strong>{{request.StatusName}}</p>
       </div>
     </div>
   </div>
@@ -21,7 +21,7 @@ export default {
   props: ['id'],
   data() {
     return {
-      request: null
+      request: {}
     }
   },
   methods: {
@@ -30,14 +30,12 @@ export default {
       var requestPayload = {
         ID: requestID
       }
-      
+
       this.$store.dispatch('getRequestDetail', requestPayload).then(value => {
         this.request = value
-        console.log(value)
       }).catch(err => {
         console.log(err)
       })
-
     }
   },
   mounted() {

@@ -6,6 +6,7 @@ var express = require('express'),
 
 var app = express();
 
+var loginController = require('./controllers/loginController');
 var requestController = require('./controllers/requestController');
 
 
@@ -42,6 +43,7 @@ var verifyAccessToken = (req, res, next) => {
   }
 }
 
+app.use('/login', loginController);
 app.use('/requests', verifyAccessToken, requestController);
 
 app.use((req, res, next) => {
