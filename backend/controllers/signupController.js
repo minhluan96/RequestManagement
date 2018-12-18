@@ -10,8 +10,9 @@ router.post('/', (req, res, next) => {
       var err = new Error('Tên tài khoản đã tồn tại')
       err.status = 403
       throw err
+    }else {
+      return userService.addAccount(req.body)
     }
-    return userService.addAccount(req.body)
   }).then(value => {
     res.statusCode = 201
     var result = { 'id': value.insertId, 'username': req.body.Username }

@@ -55,3 +55,16 @@ export const loginRequest = ({commit}, userPayload) => {
       })
   })
 }
+
+export const signupUseRequest = ({commit}, userPayload) => {
+  headers = configureHeader(utils.getAccessToken())
+  return new Promise((resolve, reject) => {
+    axios.post(`http://127.0.0.1:3010/signup`, userPayload)
+      .then(result => {
+        commit(types.USER, result.data)
+        resolve(result.data)
+      }).catch(err => {
+        reject(err)
+      })
+  })
+}

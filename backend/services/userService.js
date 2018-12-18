@@ -17,6 +17,6 @@ exports.addAccount = function(userEntity) {
 
 exports.checkUserExists = function (userEntity) {
   var id = 3;
-  var sql = `select u.ID, u.Username, u.ID_Roles, r.Name from USERS u join ROLES r on u.ID_Roles = r.ID where u.id = ${id} and u.Username = '${userEntity.Username}' `
+  var sql = `select u.ID, u.Username, u.ID_Roles from USERS as u  where u.ID_Roles = ${id} and u.Username = '${userEntity.Username}' `
   return db.load(sql)
 }

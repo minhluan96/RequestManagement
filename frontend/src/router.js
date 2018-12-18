@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Map from './components/Map.vue'
+import Signup from './views/Signup.vue'
+import utils from './store/utils.js'
 
 Vue.use(Router)
 
@@ -24,6 +26,11 @@ export default new Router({
       path: '/request/:reqId',
       name: 'map',
       component: Map
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: Signup
     },
     {
       path: '/about',
