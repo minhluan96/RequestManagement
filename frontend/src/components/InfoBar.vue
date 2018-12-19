@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="request != null">
     <el-card>
       <div class="row">
         <div class="col-md-12">
@@ -17,10 +17,13 @@
           <span>Số điện thoại: {{request.GuestTelephone}}</span><br>
           <span>Ghi chú: {{request.Note}}</span>
         </div>
-        <div class="col-md-6 mt-2">
+        <div class="col-md-6 mt-2" v-if="driverModel != null">
           <span class="title-info"><strong>THÔNG TIN TÀI XẾ</strong></span><br>
-          <span>request.start.name</span><br>
-          <span>request.start.address</span>
+          <span>{{driverModel.Username}}</span><br>
+        </div>
+        <div class="col-md-6 mt-2" v-if="driverModel == null">
+          <span class="title-info"><strong>THÔNG TIN TÀI XẾ</strong></span><br>
+          <span>Không có thông tin tài xế cho yêu cầu này </span><br>
         </div>
       </div>
       <hr>
@@ -34,8 +37,43 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
-  props: ['request']
+  props: ['request'],
+  data() {
+    return {
+      driverModel: null
+    }
+  },
+  methods: {
+    getDriverInfo(id) {
+      var driverPayload = {
+        ID: id
+      }
+      this.$store.dispatch('getDriverInfo', driverPayload).then(value => {
+        this.driverModel = value
+        console.log(value)
+      }).catch(err => {
+        console.log(err)
+        this.$message({
+            type: 'error',
+            message: `Lỗi: không thể lấy thông tin tài xế`
+          })
+      })
+    },
+    getDriverUpdateTime() {
+      return moment(this.driverModel.DriverUpdateTime).format('dddd, MMMM Do, YYYY h:mm:ss A')
+    }
+  },
+  watch: {
+    request(newValue, oldValue) {
+      this.driverModel = null
+      if (newValue != null && newValue.Driver != null) {
+        this.getDriverInfo(newValue.Driver)
+      }
+    }
+  }
 }
 </script>
 

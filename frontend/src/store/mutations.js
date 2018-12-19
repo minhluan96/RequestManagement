@@ -9,5 +9,8 @@ export const mutations = {
   },
   [types.REQUEST_DETAIL] (state, requestPayload) {
     state.requestItem = requestPayload
+  },
+  [types.GET_DRIVER] (state, driverPayload) {
+    state.driver = driverPayload
   }
 }

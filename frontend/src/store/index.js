@@ -8,7 +8,8 @@ Vue.use(Vuex)
 const state = {
   requests: {},
   requestItem: {},
-  user: {}
+  user: {},
+  driver: {}
 }
 
 export default new Vuex.Store({
