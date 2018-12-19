@@ -7,17 +7,19 @@
       ref="gmap"
       :options="options"
       map-type-id="terrain">
-      <gmap-marker ref="markers" :position="start.center" :title="start.title" :icon="start.startIcon"  :draggable="true">
+      <gmap-marker ref="markers" :position="start.center" :title="start.title" :icon="start.startIcon"  :draggable="false">
       </gmap-marker>
 
-      <gmap-marker ref="finishMarkers" :position="finish.finishCenter" :title="finish.title" :icon="finish.finishIcon" :draggable="true">
+      <gmap-marker ref="finishMarkers" :position="finish.finishCenter" :title="finish.title" :icon="finish.finishIcon" :draggable="false">
+      </gmap-marker>
+
+      <gmap-marker ref="driverMarker" :position="driver.driverPosition" :title="driver.title" :icon="driver.driverIcon" :draggable="false">
       </gmap-marker>
     </gmap-map>
     <div class="container">
       <div class="row">
         <div class="col-md-12" align="center">
           <InfoBar :request="requestModel"/>
-
         </div>
       </div>
     </div>
@@ -44,6 +46,7 @@ export default {
       timeout: null,
       marker: null,
       finishedMarker: null,
+      driverMarker: null,
       inputData: '',
       requestModel: null,
       map: null,
@@ -62,7 +65,10 @@ export default {
           lat: 10.762558,
           lng: 106.681426
         },
-        startIcon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+        startIcon: {
+          url: "http://image.flaticon.com/icons/svg/252/252025.svg",
+          scaledSize: {width: 60, height: 60, f: 'px', b: 'px'}
+        },
         title: "Nơi đón"
       },
       finish: {
@@ -74,8 +80,22 @@ export default {
           lat: 10.762977,
           lng: 106.686948
         },
-        finishIcon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+        finishIcon: {
+          url: "https://image.flaticon.com/icons/svg/608/608671.svg",
+          scaledSize: {width: 60, height: 60, f: 'px', b: 'px'}
+        },
         title: "Điểm dừng"
+      },
+      driver: {
+        driverPosition: {
+          lat: 0,
+          lng: 0
+        },
+        driverIcon: {
+          url: "https://image.flaticon.com/icons/svg/1141/1141070.svg",
+          scaledSize: {width: 60, height: 60, f: 'px', b: 'px'}
+        },
+        title: "Tài xế"
       },
       optionSelects: [
         {
@@ -138,11 +158,63 @@ export default {
       }
 
       this.$store.dispatch('getRequestDetail', requestPayload).then(value => {
+        console.log(`get request detail ${id}`, value)
         this.requestModel = value
+        this.start.position = {
+          lat: parseFloat(value.Latitude),
+          lng: parseFloat(value.Longtitude)
+        }
+        this.finish.finishPosition = {
+          lat: parseFloat(value.FinishLatitude),
+          lng: parseFloat(value.FinishLongtitude)
+        }
+        if (value.Driver != null) {
+          this.driver.driverPosition = {
+            lat: parseFloat(value.DriverLatitude),
+            lng: parseFloat(value.DriverLongtitude)
+          }
+          this.driverMarker.$markerObject.setPosition(this.driver.driverPosition)
+        }
+
+        this.marker.$markerObject.setPosition(this.start.position)
+        this.finishedMarker.$markerObject.setPosition(this.finish.finishPosition)
+        this.calculateRoutes()
         console.log(value)
       }).catch(err => {
         console.log(err)
+        this.$message({
+            type: 'error',
+            message: 'Không có vị trí chính xác để hiển thị'
+          });
       })
+    },
+    calculateRoutes() {
+      var self = this
+      var start = new google.maps.LatLng(self.start.position.lat, self.start.position.lng)
+      var end = new google.maps.LatLng(self.finish.finishPosition.lat, self.finish.finishPosition.lng);
+      var request = {
+        origin: start,
+        destination: end,
+        travelMode: google.maps.TravelMode.DRIVING
+      }
+      self.directionsService.route(request, function(response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          self.directionsDisplay.setDirections(response);
+          self.directionsDisplay.setMap(self.map)
+        } else {
+          console.log("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status)
+
+        }
+      });
+    },
+    initializeValues() {
+      this.directionsDisplay.setMap(null);
+      this.start.position.lat = 0
+      this.start.position.lng = 0
+      this.finish.finishPosition.lat = 0
+      this.finish.finishPosition.lng = 0
+      this.driver.driverPosition.lat = 0
+      this.driver.driverPosition.lng = 0
     }
   },
   mounted() {
@@ -158,8 +230,16 @@ export default {
     });
     this.marker = this.$refs.markers
     this.finishedMarker = this.$refs.finishMarkers
+    this.driverMarker = this.$refs.driverMarker
     this.mapModel = this.$refs.gmap
     this.getRequestInfo(this.$route.params.reqId)
+  },
+  watch: {
+    $route(to, from) {
+      this.initializeValues()
+      console.log('change value and request to server', this.$route.query.refresh)
+      this.getRequestInfo(this.$route.params.reqId)
+    }
   }
 }
 </script>

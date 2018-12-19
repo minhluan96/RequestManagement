@@ -68,3 +68,29 @@ export const signupUseRequest = ({commit}, userPayload) => {
       })
   })
 }
+
+export const getUserInfo = ({commit}, userPayload) => {
+  headers = configureHeader(utils.getAccessToken())
+  return new Promise((resolve, reject) => {
+    axios.get(`http://127.0.0.1:3010/users/${userPayload.ID}`, { headers })
+      .then(result => {
+        commit(types.USER, result.data)
+        resolve(result.data)
+      }).catch(err => {
+        reject(err)
+      })
+  })
+}
+
+export const getDriverInfo = ({commit}, driverPayload) => {
+  headers = configureHeader(utils.getAccessToken())
+  return new Promise((resolve, reject) => {
+    axios.get(`http://127.0.0.1:3010/drivers/${driverPayload.ID}`, { headers })
+      .then(result => {
+        commit(types.GET_DRIVER, result.data)
+        resolve(result.data)
+      }).catch(err => {
+        reject(err)
+      })
+  })
+}
