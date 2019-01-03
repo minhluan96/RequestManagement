@@ -98,8 +98,10 @@ export default {
       console.log('receivedRequestValue', value)
 
       for (var item of value) {
+
         if (this.$route.params.reqId == item.ID) {
           this.refreshTime = moment().unix()
+          console.log('refresh time', moment().unix())
           this.$router.replace({ name: 'map', params: { reqId: item.ID }, query: { refresh: self.refreshTime }})
         }
       }

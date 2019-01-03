@@ -76,13 +76,24 @@ export default {
       }
       this.errorMessage = ''
       return true
+    },
+    getUserInfo(currentUser) {
+      var payload = { ID: currentUser.user.id }
+      this.$store.dispatch('getUserInfo', payload).then(value => {
+        console.log(value == '')
+        if (value != '') {
+          this.$router.push('/')
+        }
+      }).catch(err => {
+        this.$message({ type: 'error', message: `Có lỗi xảy ra: ${err}` });
+      })
     }
   },
   mounted() {
     //do something after mounting vue instance
     var currentUser = JSON.parse(localStorage.getItem('user'))
     if (currentUser != null) {
-      this.$router.push('/')
+      this.getUserInfo(currentUser)
     }
   }
 }

@@ -11,6 +11,7 @@ var requestController = require('./controllers/requestController');
 var signupController = require('./controllers/signupController');
 var driverController = require('./controllers/driverController');
 var userController = require('./controllers/userController');
+var refreshController = require('./controllers/refreshController');
 
 app.use(morgan('dev'));
 app.use(bodyParser('json'));
@@ -50,6 +51,7 @@ app.use('/requests', verifyAccessToken, requestController);
 app.use('/signup', signupController);
 app.use('/drivers', verifyAccessToken, driverController)
 app.use('/users', verifyAccessToken, userController)
+app.use('/refresh', refreshController)
 
 app.use((req, res, next) => {
   var err = new Error("Not found");
