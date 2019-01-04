@@ -11,21 +11,21 @@
           <el-input style="margin-top: 10px"
           placeholder="Tên tài khoản"
           v-model="IPName">
-          <i slot="prefix" class="el-input__icon glyphicon glyphicon-user"></i>
+          <i slot="prefix" class="el-input__icon fas fa-user"></i>
         </el-input>
 
         <el-input style="margin-top: 20px"
         placeholder="Mật khẩu"
         type="password"
         v-model="IPPass">
-        <i slot="prefix" class="el-input__icon glyphicon glyphicon-lock"></i>
+        <i slot="prefix" class="el-input__icon fas fa-lock"></i>
       </el-input>
 
       <el-input style="margin-top: 20px"
       placeholder="Nhập lại mật khẩu"
       type="password"
       v-model="IPCheckPass">
-      <i slot="prefix" class="el-input__icon glyphicon glyphicon-repeat"></i>
+      <i slot="prefix" class="el-input__icon fas fa-redo"></i>
     </el-input>
 
     <div style="margin-top: 20px">
