@@ -1,15 +1,17 @@
-exports.getAccessToken = function () {
+var getAccessToken = function () {
   var user = JSON.parse(localStorage.getItem('user'))
   if (user == null) return ''
   return user.accessToken
 }
 
-exports.saveUser = function (user) {
-  localStorage.setItem('user', JSON.stringify(value))
+var saveUser = function (user) {
+  localStorage.setItem('user', JSON.stringify(user))
 }
 
-exports.getUserID = function () {
+var getUserID = function () {
   var user = JSON.parse(localStorage.getItem('user'))
   if (user == null) return ''
   return user.user.id
 }
+
+export default { getAccessToken, saveUser, getUserID }
